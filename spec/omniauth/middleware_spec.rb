@@ -25,7 +25,7 @@ RSpec.describe Omniauth::Protect::Middleware do
         end
 
         it 'different path' do
-          url = 'https://myapp.dev/auth/non-github/'
+          url = 'https://myapp.dev/auth/non-github'
 
           result = middleware.call(Rack::MockRequest.env_for(url))
 
