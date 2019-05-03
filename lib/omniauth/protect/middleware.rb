@@ -8,7 +8,10 @@ module Omniauth
       end
 
       def call(env)
-        if !Omniauth::Protect.configuration[:paths].include?(env['PATH_INFO'])
+        path = env['PATH_INFO']
+        unprotected_path =  !Omniauth::Protect.configuration[:paths].include?(path) || !Omniauth::Protect.configuration[:paths].include?("#{path}/")
+
+        if unprotected_path
           @app.call(env)
         else
           return ACCESS_DENIED if env['REQUEST_METHOD'] != 'POST'
