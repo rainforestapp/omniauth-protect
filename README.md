@@ -39,3 +39,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/rainfo
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+
+## Thanks
+
+Speacial thanks to [RainforestQA](https://www.rainforestqa.com/)
