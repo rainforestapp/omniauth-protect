@@ -1,0 +1,80 @@
+version: 2
+
+jobs:
+  style_check:
+    docker:
+      - image: rainforestapp/circlemator:latest
+    steps:
+      - checkout
+      - run:
+          name: Style check
+          command: circlemator style-check --base-branch=master
+
+  test:
+    docker:
+      - image: circleci/ruby:2.5.1
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-omniauth-protect-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install Ruby gems
+          command: |
+            bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+      - save_cache:
+          key: v1-omniauth-protect-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+      - run:
+          name: Set up test output directory
+          command: sudo install -o circleci -d ~/rspec
+      - run:
+          name: RSpec
+          command: |
+            bundle exec rspec \
+              --color \
+              --require spec_helper \
+              --format documentation \
+              --format RspecJunitFormatter \
+              --out ~/rspec/rspec.xml
+      - store_artifacts:
+          path: ~/rspec
+      - store_test_results:
+          path: ~/rspec
+
+  push_to_rubygems:
+    docker:
+      - image: circleci/ruby:2.5.1
+    steps:
+      - checkout
+      - run:
+          name: Create .gem/credentials file
+          command: |
+            mkdir ~/.gem
+            echo "---
+              :rubygems_api_key: $RUBYGEMS_API_KEY
+            " > ~/.gem/credentials
+            chmod 600 ~/.gem/credentials
+      - run:
+          name: Release omniauth-protect
+          command: |
+            gem build omniauth-protect
+            gem push omniauth-protect-*.gem
+workflows:
+  version: 2
+  gem_release:
+    jobs:
+      - test
+      - style_check:
+          filters:
+            branches:
+              ignore:
+                - master
+      - push_to_rubygems:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+                - /^v.*/
