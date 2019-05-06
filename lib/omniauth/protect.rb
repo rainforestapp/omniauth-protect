@@ -1,4 +1,5 @@
 require 'base64'
+require 'rack'
 
 module Omniauth
   module Protect
