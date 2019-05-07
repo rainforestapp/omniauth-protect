@@ -1,14 +1,14 @@
 module Omniauth
   module Protect
     class Middleware
-      ACCESS_DENIED = [403, { 'Content-Type' => 'text/plain'}, [ Omniauth::Protect.configuration[:message] ] ].freeze
+      ACCESS_DENIED = [403, { 'Content-Type' => 'text/plain'}, [ Omniauth::Protect.config[:message] ] ].freeze
 
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        if !Omniauth::Protect.configuration[:paths].include?(env['PATH_INFO'])
+        if !Omniauth::Protect.config[:paths].include?(env['PATH_INFO'])
           @app.call(env)
         else
           return ACCESS_DENIED if env['REQUEST_METHOD'] != 'POST'
