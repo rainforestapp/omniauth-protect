@@ -33,6 +33,7 @@ You can configure the following parameters according to your needs
 ```ruby
 Omniauth::Protect.config[:message] = 'CSRF detected'
 Omniauth::Protect.config[:paths] = ['/auth/twitter', '/auth/google' ,'/auth/github']
+Omniauth::Protect.configure
 ```
 
 ## Development
