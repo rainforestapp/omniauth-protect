@@ -1,8 +1,6 @@
 module Omniauth
   module Protect
     class Middleware
-      ACCESS_DENIED = [403, { 'Content-Type' => 'text/plain'}, [ Omniauth::Protect.config[:message] ] ].freeze
-
       def initialize(app)
         @app = app
       end
@@ -11,14 +9,15 @@ module Omniauth
         if !Omniauth::Protect.config[:paths].include?(env['PATH_INFO'])
           @app.call(env)
         else
-          return ACCESS_DENIED if env['REQUEST_METHOD'] != 'POST'
+          access_denied = [403, { 'Content-Type' => 'text/plain'}, [ Omniauth::Protect.config[:message] ] ]
+          return access_denied if env['REQUEST_METHOD'] != 'POST'
 
           req = Rack::Request.new(env)
           encoded_masked_token = req.params['authenticity_token']
 
-          return ACCESS_DENIED if !encoded_masked_token
+          return access_denied if !encoded_masked_token
 
-          valid_csrf_token?(env, encoded_masked_token) ? @app.call(env) : ACCESS_DENIED
+          valid_csrf_token?(env, encoded_masked_token) ? @app.call(env) : access_denied
         end
       end
       # This is mostly taken & adapted from https://github.com/rails/rails/blob/v4.2.0/actionpack/lib/action_controller/metal/request_forgery_protection.rb#L276

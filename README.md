@@ -28,10 +28,10 @@ config.middleware.use Omniauth::Protect::Middleware
 
 ## Configuration
 
-You can configure the following parameters according to your needs
+You need to create an initiliazer like `config/initializers/omniauth_protect.rb` for configuration
 
 ```ruby
-Omniauth::Protect.config[:message] = 'CSRF detected'
+Omniauth::Protect.config[:message] = 'CSRF detected, Access Denied'
 Omniauth::Protect.config[:paths] = ['/auth/twitter', '/auth/google' ,'/auth/github']
 Omniauth::Protect.configure
 ```

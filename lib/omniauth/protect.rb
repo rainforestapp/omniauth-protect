@@ -3,9 +3,12 @@ require 'rack'
 
 module Omniauth
   module Protect
+    class ConfigException < Exception
+    end
+
     @config = {
-      message: 'CSRF detected, Access Denied',
-      paths: ['/auth/github']
+      message: '',
+      paths: []
     }
 
     def self.config
@@ -14,6 +17,9 @@ module Omniauth
 
     # Adds / to the paths
     def self.configure
+      raise ConfigException.new('message must be specified') if config[:message].empty?
+      raise ConfigException.new('paths must be specified') if config[:paths].empty?
+
       config[:paths].each do |path|
         next if path[-1] == '/'
 
@@ -22,7 +28,5 @@ module Omniauth
     end
   end
 end
-
-Omniauth::Protect.configure
 
 require 'omniauth/protect/middleware'

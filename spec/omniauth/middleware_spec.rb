@@ -15,6 +15,12 @@ RSpec.describe Omniauth::Protect::Middleware do
   let(:middleware) { described_class.new(app) }
 
   describe '#call' do
+    before do
+      Omniauth::Protect.config[:paths] = ['/auth/github']
+      Omniauth::Protect.config[:message] = 'CSRF detected, Access Denied'
+      Omniauth::Protect.configure
+    end
+
     context '/auth/github' do
       context 'renders 200' do
         it 'valid csrf' do
