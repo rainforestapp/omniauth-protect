@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'omniauth/protect/middleware'
 
 RSpec.describe Omniauth::Protect::Middleware do
@@ -24,7 +26,7 @@ RSpec.describe Omniauth::Protect::Middleware do
     context '/auth/github' do
       context 'renders 200' do
         it 'valid csrf' do
-          allow_any_instance_of(described_class).to receive(:valid_csrf_token?).and_return(true)
+          allow_any_instance_of(Omniauth::Protect::Validator).to receive(:valid_csrf_token?).and_return(true)
           result = middleware.call(mock_env)
 
           expect(result[0]).to eq 200

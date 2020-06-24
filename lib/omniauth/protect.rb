@@ -29,4 +29,5 @@ module Omniauth
   end
 end
 
+require 'omniauth/protect/validator'
 require 'omniauth/protect/middleware'
