@@ -20,11 +20,25 @@ Or install it yourself as:
 
 ## Usage
 
-Add this line to your `config/application.rb`
+Add this line to your `config/application.rb` to use the middleware
 
 ```ruby
 config.middleware.use Omniauth::Protect::Middleware
 ```
+
+Or use the validator on it's own
+
+```ruby
+Omniauth::Protect::Validator.new(request.env, encoded_masked_token).valid_csrf_token?
+```
+
+### Rails versions support
+
+`omniauth-protect` `1.0.0` supports `rails < 5.2.4.3` and between `6.0.0` and `6.0.3`
+
+`omniauth-protect` `2.0.0` supports `rails = 5.2.4.3`
+
+`omniauth-protect` `3.0.0` supports `rails > 6.0.3.1`
 
 ## Configuration
 
