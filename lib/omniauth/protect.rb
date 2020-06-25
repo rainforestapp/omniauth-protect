@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'base64'
 require 'rack'
 
@@ -8,7 +10,7 @@ module Omniauth
 
     @config = {
       message: '',
-      paths: []
+      paths: [],
     }
 
     def self.config
@@ -29,4 +31,5 @@ module Omniauth
   end
 end
 
+require 'omniauth/protect/validator'
 require 'omniauth/protect/middleware'
