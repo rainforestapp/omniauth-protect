@@ -8,6 +8,8 @@ module Omniauth
         @encoded_masked_token = encoded_masked_token
       end
 
+      # This is mostly taken & adapted from Rails' action_controller/metal/request_forgery_protection.rb
+      # We copy code from Rails in such a horrible manner because Rails doesn't really expose CSRF protection
       def valid_csrf_token?
         begin
           masked_token = Base64.urlsafe_decode64(@encoded_masked_token)
