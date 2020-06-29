@@ -17,7 +17,7 @@ module Omniauth
           return access_denied if env['REQUEST_METHOD'] != 'POST'
 
           req = Rack::Request.new(env)
-          encoded_masked_token = req.params['authenticity_token']
+          encoded_masked_token = req.params['authenticity_token'].to_s
 
           return access_denied if !encoded_masked_token
 
