@@ -54,6 +54,22 @@ RSpec.describe Omniauth::Protect::Middleware do
           expect(result).to eq [403, { 'Content-Type' => 'text/plain' }, ['CSRF detected, Access Denied']]
         end
       end
+
+      context 'when authenticity token is a Hash somehow' do
+        let(:mock_env) do
+          Rack::MockRequest.env_for(
+            url,
+            'REQUEST_METHOD' => 'POST',
+            params: { 'authenticity_token' => {'inline' => '<%= rm -rf / %>' } }
+          )
+        end
+
+        it 'denies access' do
+          result = middleware.call(mock_env)
+
+          expect(result[0]).to eq 403
+        end
+      end
     end
   end
 end
