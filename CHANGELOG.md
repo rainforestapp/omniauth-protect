@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2020-06-29
+### Fixed
+- Always cast tokens read from session to a string
+
 ## [3.0.0] - 2020-06-25
 ### Change
 - Only supports Rails 6+, use 2.0.0 for Rails 5.2.4.3
