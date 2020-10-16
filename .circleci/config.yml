@@ -1,9 +1,9 @@
-version: 2
+version: 2.1
 
 jobs:
   style_check:
     docker:
-      - image: rainforestapp/circlemator:latest
+      - image: gcr.io/rf-public-images/circlemator:latest
     steps:
       - checkout
       - run:
@@ -13,6 +13,9 @@ jobs:
   test:
     docker:
       - image: circleci/ruby:2.5.8
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
     steps:
       - checkout
       - restore_cache:
@@ -46,6 +49,9 @@ jobs:
   push_to_rubygems:
     docker:
       - image: circleci/ruby:2.5.8
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
     steps:
       - checkout
       - run:
@@ -61,16 +67,21 @@ jobs:
           command: |
             gem build omniauth-protect
             gem push omniauth-protect-*.gem
+
 workflows:
   version: 2
   gem_release:
     jobs:
-      - test
+      - test:
+          context:
+            - DockerHub
       - style_check:
           filters:
             branches:
               ignore:
                 - master
+          context:
+            - DockerHub
       - push_to_rubygems:
           filters:
             branches:
@@ -79,3 +90,5 @@ workflows:
             tags:
               only:
                 - /^v.*/
+          context:
+            - DockerHub
