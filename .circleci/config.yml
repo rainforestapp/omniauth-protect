@@ -75,12 +75,14 @@ workflows:
       - test:
           context:
             - DockerHub
+            - RubyGems
       - style_check:
           filters:
             branches:
               ignore:
                 - master
           context:
+            - circlemator
             - DockerHub
       - push_to_rubygems:
           filters:
@@ -92,3 +94,4 @@ workflows:
                 - /^v.*/
           context:
             - DockerHub
+            - RubyGems
