@@ -1,18 +1,9 @@
 version: 2.1
 
 jobs:
-  style_check:
-    docker:
-      - image: gcr.io/rf-public-images/circlemator:latest
-    steps:
-      - checkout
-      - run:
-          name: Style check
-          command: circlemator style-check --base-branch=master
-
   test:
     docker:
-      - image: circleci/ruby:2.7.2
+      - image: cimg/ruby:2.7.2
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_TOKEN
@@ -24,7 +15,9 @@ jobs:
           name: Install Ruby gems
           command: |
             gem install bundler
-            bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+            bundle config set --local path 'vendor/bundle'
+            bundle config set --local without pronto
+            bundle check || bundle install --jobs=4 --retry=3
       - save_cache:
           key: v1-omniauth-protect-{{ checksum "Gemfile.lock" }}
           paths:
@@ -48,7 +41,7 @@ jobs:
 
   push_to_rubygems:
     docker:
-      - image: circleci/ruby:2.7.2
+      - image: cimg/ruby:2.7.2
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_TOKEN
@@ -69,21 +62,12 @@ jobs:
             gem push omniauth-protect-*.gem
 
 workflows:
-  version: 2
   gem_release:
     jobs:
       - test:
           context:
             - DockerHub
             - RubyGems
-      - style_check:
-          filters:
-            branches:
-              ignore:
-                - master
-          context:
-            - circlemator
-            - DockerHub
       - push_to_rubygems:
           filters:
             branches:
